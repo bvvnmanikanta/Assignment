@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:movie-management="http://www.mulesoft.org/schema/mule/movie-management"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/movie-management http://www.mulesoft.org/schema/mule/movie-management/current/mule-movie-management.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<movie-management:config name="Movie_Management_Config" doc:name="Movie Management Config" doc:id="9825ed80-3a08-4c66-9c04-480f18de0163" property_host="${mm.host}" property_port="${mm.port}" property_protocol="${mm.protocol}" property_authorization="${mm.authorization}" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="82ce3bcb-4f10-4a22-a8f9-7c3e181bd913" >
+		<http:request-connection host="${http.host}" port="${http.port}" />
+	</http:request-config>
+	<flow name="getTicket" doc:id="4eed2c9f-dd62-4394-9bb1-5cadd104f2a4" >
+		<set-variable value="#[XmlModule::xpath('//ticket-id/text()',payload.body.^raw,{})]" doc:name="Ticket ID" doc:id="a7347b94-fc11-47a2-ba2a-a6ce1ea31b1c" variableName="ticketId"/>
+		<db:select doc:name="Get Ticket Details" doc:id="74d33100-2557-43b9-ac4a-fa7d86d1eedb" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM Orders WHERE order_id = :oid]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"oid" : vars.ticketId}]]]></db:input-parameters>
+		</db:select>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"Ticket-Id": payload.order_id,&#10;	"Movie-Id": payload.movie_id,&#10;	"Seats": payload.no_of_seats,&#10;	"Total-Price": payload.total_price&#10;}]' doc:name="Set Variable" doc:id="21cd1898-8a14-4d41-a951-2a3209f429f8" variableName="order_data"/>
+		<movie-management:get-movie doc:name="Get Movie" doc:id="f76ebe82-2ec2-4463-bdf9-6c7769d8bec5" config-ref="Movie_Management_Config" id='#[vars.order_data."Movie-Id"]' client-id="123" client-secret="321"/>
+		<ee:transform doc:name="Transform Message" doc:id="df2511ab-52f4-47f8-a340-d7b21402b1de" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Ticket-Id": vars.order_data."Ticket-Id",
+	"Movie": payload.name,
+	"Show": payload.show,
+	"Theatre": payload.theatre,
+	"City": payload.city,
+	"Language": payload.language,
+	"Seats": vars.order_data.Seats,
+	"Total-Price": vars.order_data."Total-Price"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="orderTicket" doc:id="e0a47979-b836-481f-8157-76e8b71e3886" >
+		<set-variable value="#[XmlModule::xpath('//ticket-id/text()',payload.body.^raw,{})]" doc:name="Movie ID" doc:id="e1d4db8a-538e-4fbb-ba33-67b6758c6e52" variableName="movie_id"/>
+		<set-variable value="#[XmlModule::xpath('//no-of-seats/text()',payload.body.^raw,{})]" doc:name="seats" doc:id="7b58c908-d923-4ee1-a32b-2295ab55c796" variableName="seats"/>
+		<movie-management:get-movie doc:name="Get Movie" doc:id="0541d0ad-8de5-4cee-8b90-e9c7ba2ead21" config-ref="Movie_Management_Config" id="#[vars.movie_id]" client-id="123" client-secret="321"/>
+		<choice doc:name="Choice" doc:id="5324d5a0-3c43-489b-b57e-16341edae713" >
+			<when expression="#[payload.available_seats &gt;= vars.seats]">
+				<flow-ref doc:name="Calculate Discount" doc:id="76bb294f-bb38-46ac-bc3b-507a7e2bf668" name="calculateDiscount"/>
+				<ee:transform doc:name="Order Details" doc:id="beb0d28c-6814-42f1-91ce-540ff855cbed">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Ticket-Id": payload.id ++ now() as String,
+	"Movie-Id": vars.movie_id,
+	"Movie": payload.name,
+	"Show": payload.show,
+	"Theatre": payload.theatre,
+	"City": payload.city,
+	"Language": payload.language,
+	"Seats": vars.seats,
+	"Total-Price": vars.price
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<set-variable value='#[payload."Ticket-Id"]' doc:name="Ticket ID" doc:id="77b09a3d-e148-4922-adbd-881c4d2a7140" variableName="ticketId"/>
+				<db:insert doc:name="Insert" doc:id="10f81085-aecf-4ab7-8c24-3a22abceffcd" config-ref="Database_Config">
+					<db:sql ><![CDATA[INSERT INTO Orders VALUES(order_id=:oid, movie_id=:mid, no_of_seats=:seats, total_price=:tp)]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	"oid": payload."Ticket-Id",
+	"mid": payload."Movie-Id",
+	"seats": vars.seats,
+	"tp": vars.price
+}]]]></db:input-parameters>
+				</db:insert>
+				<http:request method="GET" doc:name="Request" doc:id="eb551943-9055-4db9-93a9-c0e6d80ba75b" config-ref="HTTP_Request_configuration" path='#["/" ++ vars.ticketId]'/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Seats not available" doc:id="f3fb74bb-4746-497d-9d44-9c2b5604313a" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	message: "Seats Not Available"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	<sub-flow name="calculateDiscount" doc:id="ef3e5a58-f0eb-48ca-8c24-a0e15c92703a" >
+		<choice doc:name="Choice" doc:id="cf360079-38c8-4899-8902-0f33a3b91363" >
+			<when expression="#[vars.seats &gt;= 5]">
+				<set-variable value="#[(vars.seats * payload.price)-100]" doc:name="Price" doc:id="69144b60-72f6-48af-8da8-8b15d4cc3b67" variableName="price"/>
+			</when>
+			<otherwise >
+				<set-variable value="#[vars.seats * payload.price]" doc:name="Price" doc:id="80ff019c-628c-44c2-9b9b-6c73bf1cdfc5" variableName="price"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

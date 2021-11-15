@@ -1,0 +1,14 @@
+%dw 2.0
+
+type auto_e0a47979_b836_481f_8157_76e8b71e3886_Output_Payload = {
+  theatre: String, 
+  city: String, 
+  price: Number, 
+  name: String, 
+  show: "Afternoon" | "Evening" | "Night" | "Morning", 
+  language: String, 
+  id: String, 
+  available_seats: Number, 
+  _?: Any
+}
+

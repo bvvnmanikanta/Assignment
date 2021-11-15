@@ -30,24 +30,20 @@
         <flow-ref doc:name="Flow Reference" doc:id="52a414f3-24a8-4a57-8a94-6d5446b967af" name="orderTicket"/>
 		<ee:transform>
             <ee:message>
-                <ee:set-payload>
-                    <![CDATA[%dw 2.0
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/java
 ns soap http://schemas.xmlsoap.org/soap/envelope
 ---
 {
     body: {
-        soap#Fault: {
-            faultcode: "soap:Server",
-            faultstring: "Operation [POST_OrderTicket:\soapkit-config] not implemented"
-        }
+    	ticket: payload
     } write "application/xml"
 }]]>
                 </ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="GET_ByTicketId_GET:\soapkit-config">
+    <flow name="GET_ByTicketId_GET:\soapkit-config" doc:id="a899869f-44b6-420d-9f5e-4d1c4a57f957">
 		<flow-ref doc:name="getTicket" doc:id="84015ef0-d7c9-4d20-9630-eeaf37d27efd" name="getTicket"/>
 		<ee:transform>
             <ee:message>
