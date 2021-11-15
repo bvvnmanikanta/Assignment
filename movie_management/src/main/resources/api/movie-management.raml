@@ -1,0 +1,66 @@
+#%RAML 1.0
+title: Movie Management
+description: This is a Movie Management API helps in the following things:<br>
+  * Display the movies that can be booked along with its information. <br>
+  * Book a movie and return the eTicket. <br>
+  * Apply discounts on Bulk moive bookings.
+
+mediaType:
+  - application/json
+  - application/xml
+
+protocols:
+  - HTTP
+
+types:
+  movie: !include Data Types/movie.raml
+
+/movies:
+  get:
+    displayName: Get Movies
+    description: Returns a list of all the movies.
+    queryParameters:
+      city:
+        type: string
+        required: false
+        enum:
+          - Pune
+          - Hyderabad
+          - Mumbai
+          - Chennai
+          - Bangalore
+    responses:
+      200:
+        body:
+          application/json:
+            type: movie[]
+            examples:
+              output: !include Examples/movies.raml
+  /{id}:
+    get:
+      displayName: Get Movie
+      description: Returns a specific movie based on the id provided.
+      responses:
+        200:
+          body:
+            application/json:
+              type: movie
+              examples: !include Examples/movie.raml
+    patch:
+      displayName: Update seats
+      description: Update total available seats for the movie.
+      body:
+        application/json:
+          examples:
+            {
+              id: "AVGPVR",
+              available_seats: 100
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  "message": "Updated Successfully"
+                }

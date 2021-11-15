@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_b467cbf6_b45c_49ae_9975_1d9f8f26a602_Output_Payload = Array<{  theatre: String,   city: String,   price: Number,   name: String,   show: String,   language: String,   id: String,   available_seats: Number,   _?: Any}>
+

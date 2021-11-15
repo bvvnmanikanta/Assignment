@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="get-movies" doc:id="b467cbf6-b45c-49ae-9975-1d9f8f26a602" >
+		<db:select doc:name="Select" doc:id="0ad41f8b-88cc-45b0-b470-e7998e6d36da" config-ref="Database_Config">
+			<db:sql ><![CDATA[Select * from `movies`]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Java to Json" doc:id="abaee1bd-7f45-4e4c-9181-9de10ea10eb9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="5d612b41-68d9-427d-9fff-d0ae83de0be7" message="#[payload]"/>
+	</flow>
+	<flow name="get-movie-by-id" doc:id="d65da08e-a4eb-4469-8e2d-a3744ce87fc2" >
+		<db:select doc:name="Select" doc:id="ea897cda-6d93-45b9-93da-035be2c982f6" config-ref="Database_Config">
+			<db:sql ><![CDATA[Select * from `movies` where movie_id = :id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{ 'id' : attributes.uriParams.id }]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Java to Json" doc:id="eb23e3ce-59ca-4759-866b-6365e0158aac">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="62876201-5f04-47a6-9f9e-d0ad68b75b27" message="#[payload]"/>
+	</flow>
+	<flow name="patch-available-seats" doc:id="5366ebdc-0d2c-4cbe-a9c2-74acf272309a" >
+		<set-variable value="#[payload.movie_id]" doc:name="Set Variable" doc:id="6fd50011-866d-4cbc-8a5b-40eb12837323" variableName="movie_id"/>
+		<db:update doc:name="Update" doc:id="32e8953d-8241-41a5-adb2-469ed2a730bf" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE movies
+SET available_seats = :available_seats
+WHERE movie_id = :movie_id;
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{	
+	'available_seats' : payload.available_seats,
+	'movie_id' : payload.movie_id
+}]]]></db:input-parameters>
+		</db:update>
+		<logger level="INFO" doc:name="Logger" doc:id="ad655c09-f033-4999-bef6-86e3b2824652" message="#[vars.movie_id]"/>
+		<http:request method="GET" doc:name="Request" doc:id="55be4bd4-2001-45a5-9b09-c062fe761fe4" path="/api/movies/{id}" config-ref="HTTP_Request_configuration">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"id" : vars.movie_id
+}]]]></http:uri-params>
+		</http:request>
+	</flow>
+</mule>

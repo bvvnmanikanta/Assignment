@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:movie-management="http://www.mulesoft.org/schema/mule/movie-management"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/movie-management http://www.mulesoft.org/schema/mule/movie-management/current/mule-movie-management.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="b10c6761-a1ee-4fb4-962e-2446c8ca78f6" file="config.yaml" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7013ab2a-fdab-44cb-95d2-ee0a6a6f90da" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	<movie-management:config name="Movie_Management_Config" doc:name="Movie Management Config" doc:id="411fd44f-d615-4c5b-b211-5b9883d19fed" property_host="${mm.host}" property_port="${mm.port}" property_protocol="${mm.protocol}" property_authorization="${mm.authorization}" />
+	<error-handler name="globalError_Handler" doc:id="29490ff6-2288-4eb9-ae60-34059f08041e" >
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="61ad1c44-bf17-4766-93c4-0c86ced9ef20" type="ANY">
+			<ee:transform doc:name="Error Description" doc:id="a3e094da-7950-454e-aa2c-466ba8ad5475">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": error.description
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		</on-error-continue>
+	</error-handler>
+</mule>

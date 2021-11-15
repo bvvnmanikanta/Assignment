@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:movie-management="http://www.mulesoft.org/schema/mule/movie-management" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/movie-management http://www.mulesoft.org/schema/mule/movie-management/current/mule-movie-management.xsd">
+	<flow name="getMovies" doc:id="4a004e7f-30be-4542-9ee2-e28c549e050f" >
+		<movie-management:get-movies doc:name="Get Movies" doc:id="bf37dec7-1644-4ce5-bcc9-d665917f1390" config-ref="Movie_Management_Config" client-id="#[attributes.headers.clientId]" client-secret="#[attributes.headers.clientSecret]"/>
+	</flow>
+	<flow name="getMovieById" doc:id="68b1b411-33d5-4d5c-88e5-6d409aadc2b9" >
+		<movie-management:get-movie doc:name="Get Movie" doc:id="52c119a3-746f-4717-9c93-b4dd9c64fc83" config-ref="Movie_Management_Config" id="#[atriutes.uriParams.id]" client-id="#[attributes.headers.clientId]" client-secret="#[attributes.headers.clientSecret]"/>
+	</flow>
+	<flow name="implementationFlow" doc:id="cd0dfe23-4645-4a61-84e7-79da344cc2fc" >
+		<movie-management:update-seats doc:name="Update seats" doc:id="209e2db3-4d6d-49cc-80e9-9c8f8cff8ada" config-ref="Movie_Management_Config" id="#[attributes.uriParams.id]" client-id="#[attributes.headers.clientId]" client-secret="#[attributes.headers.clientSecret]"/>
+	</flow>
+</mule>

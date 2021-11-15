@@ -1,0 +1,14 @@
+%dw 2.0
+
+type auto_d65da08e_a4eb_4469_8e2d_a3744ce87fc2_Input_Payload = {
+  theatre: String, 
+  city: String, 
+  price: Number, 
+  name: String, 
+  show: String, 
+  language: String, 
+  id: String, 
+  available_seats: Number, 
+  _?: Any
+}
+

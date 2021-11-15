@@ -1,0 +1,44 @@
+#%RAML 1.0 Library
+types:
+  showType:
+    description: This is data type related to show, whose value is restricted to "Morning", "Afternoon", "Evening" and "Night".
+    type: string
+    enum:
+      - Morning
+      - Afternoon
+      - Evening
+      - Night
+
+  numeric:
+    description: This data type is to represent positive integers like number of seats, price.
+    type: number
+    minimum: 0
+    multipleOf: 1
+
+  movieType:
+    description: This data type is collection of movie details namely name, id, language, theatre, city, show, price, available seats.
+    properties:
+      id: string
+      name: string
+      language: string
+      theatre: string
+      city: string
+      show: showType
+      price: numeric
+      available_seats: numeric
+  
+  orderType:
+    description: This data type defines details required to post an order.
+    properties:
+      movie-id: string
+      date-of-show: date-only
+      no-of-seats: numeric
+
+  ticketType:
+    description: This data type defines all the details related to a ticket.
+    properties:
+      ticket_id: string
+      movie: string
+      theatre: string
+      show: showType
+      No_Of_Seats: numeric

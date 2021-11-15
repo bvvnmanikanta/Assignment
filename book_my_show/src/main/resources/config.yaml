@@ -1,0 +1,9 @@
+http:
+  port: '8081'
+  host: 'localhost'
+  
+mm:
+  port: '8081'
+  host: 'localhost'
+  protocol: 'http'
+  authorization: 'xyz'

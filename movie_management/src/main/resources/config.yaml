@@ -1,0 +1,10 @@
+http:
+  port: '8081'
+  host: 'localhost'
+  
+db:
+  host: "sql6.freesqldatabase.com"
+  port: "3306"
+  username: "sql6449785"
+  password: "2kGs24EVlk"
+  database: "sql6449785"
