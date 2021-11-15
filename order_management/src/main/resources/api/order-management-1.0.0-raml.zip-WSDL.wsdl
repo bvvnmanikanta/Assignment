@@ -4,7 +4,7 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	xmlns:schemas="HTTP://www.example.com/schemas" 
 	xmlns:wsdl="HTTP://www.example.com/wsdl" 
-	targetNamespace="HTTP://www.example.com/wsdl/order-management-1.0.0-raml.zip-WSDL.wsdl" 
+	targetNamespace="HTTP://www.example.com/wsdl" 
 	xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
     <xs:schema xmlns:tns="HTTP://www.example.com/schemas" targetNamespace="HTTP://www.example.com/schemas" xmlns:xs="http://www.w3.org/2001/XMLSchema">

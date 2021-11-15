@@ -8,3 +8,9 @@ db:
   username: "sql6449785"
   password: "2kGs24EVlk"
   database: "sql6449785"
+  
+mm:
+  port: '8081'
+  host: 'movie-management.us-e2.cloudhub.io'
+  protocol: 'http'
+  authorization: 'xyz'
