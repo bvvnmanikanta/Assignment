@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions name="Order_Management"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:schemas="HTTP://www.example.com/schemas" 
+	xmlns:wsdl="HTTP://www.example.com/wsdl" 
+	targetNamespace="HTTP://www.example.com/wsdl/order-management-1.0.0-raml.zip-WSDL.wsdl" 
+	xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xs:schema xmlns:tns="HTTP://www.example.com/schemas" targetNamespace="HTTP://www.example.com/schemas" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="POST_OrderTicket_InputMessage" type="schemas:POST_OrderTicket_InputMessage" />
+      <xs:element name="POST_OrderTicket_OutputMessage" type="schemas:POST_OrderTicket_OutputMessage" />
+      <xs:element name="POST_OrderTicket_400" type="schemas:POST_OrderTicket_400" />
+      <xs:element name="POST_OrderTicket_401" type="schemas:POST_OrderTicket_401" />
+      <xs:element name="POST_OrderTicket_404" type="schemas:POST_OrderTicket_404" />
+      <xs:element name="POST_OrderTicket_500" type="schemas:POST_OrderTicket_500" />
+      <xs:element name="GET_ByTicketId_GET_InputMessage" type="schemas:GET_ByTicketId_GET_InputMessage" />
+      <xs:element name="GET_ByTicketId_GET_OutputMessage" type="schemas:GET_ByTicketId_GET_OutputMessage" />
+      <xs:element name="GET_ByTicketId_GET_400" type="schemas:GET_ByTicketId_GET_400" />
+      <xs:element name="GET_ByTicketId_GET_401" type="schemas:GET_ByTicketId_GET_401" />
+      <xs:element name="GET_ByTicketId_GET_404" type="schemas:GET_ByTicketId_GET_404" />
+      <xs:element name="GET_ByTicketId_GET_500" type="schemas:GET_ByTicketId_GET_500" />
+      <xs:complexType name="orderType">
+        <xs:annotation>
+          <xs:documentation>This data type defines details required to post an order.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="movie-id" type="xs:string" />
+          <xs:element minOccurs="1" name="date-of-show" type="xs:date" />
+          <xs:element minOccurs="1" name="no-of-seats">
+            <xs:simpleType>
+              <xs:restriction base="xs:double">
+                <xs:minInclusive value="0" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ticketType">
+        <xs:annotation>
+          <xs:documentation>This data type defines all the details related to a ticket.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="ticket_id" type="xs:string" />
+          <xs:element minOccurs="1" name="movie" type="xs:string" />
+          <xs:element minOccurs="1" name="theatre" type="xs:string" />
+          <xs:element minOccurs="1" name="show" type="schemas:showType">
+            <xs:annotation>
+              <xs:documentation>This is data type related to show, whose value is restricted to "Morning", "Afternoon", "Evening" and "Night".</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" name="No_Of_Seats">
+            <xs:simpleType>
+              <xs:restriction base="xs:double">
+                <xs:minInclusive value="0" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="price">
+            <xs:simpleType>
+              <xs:restriction base="xs:double">
+                <xs:minInclusive value="0" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="showType">
+        <xs:annotation>
+          <xs:documentation>This is data type related to show, whose value is restricted to "Morning", "Afternoon", "Evening" and "Night".</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Morning" />
+          <xs:enumeration value="Afternoon" />
+          <xs:enumeration value="Evening" />
+          <xs:enumeration value="Night" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="movieType">
+        <xs:annotation>
+          <xs:documentation>This data type is collection of movie details namely name, id, language, theatre, city, show, price, available seats.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="id" type="xs:string" />
+          <xs:element minOccurs="1" name="name" type="xs:string" />
+          <xs:element minOccurs="1" name="language" type="xs:string" />
+          <xs:element minOccurs="1" name="theatre" type="xs:string" />
+          <xs:element minOccurs="1" name="city" type="xs:string" />
+          <xs:element minOccurs="1" name="show" type="schemas:showType">
+            <xs:annotation>
+              <xs:documentation>This is data type related to show, whose value is restricted to "Morning", "Afternoon", "Evening" and "Night".</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" name="price">
+            <xs:simpleType>
+              <xs:restriction base="xs:double">
+                <xs:minInclusive value="0" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="available_seats">
+            <xs:simpleType>
+              <xs:restriction base="xs:double">
+                <xs:minInclusive value="0" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="OrderTicketresponse400">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="StatusCode" type="xs:string" />
+          <xs:element minOccurs="1" name="ErrorMessage" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="response400">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="StatusCode" type="xs:string" />
+          <xs:element minOccurs="1" name="ErrorMessage" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="POST_OrderTicket_InputMessage">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="client_id" type="xs:string" />
+          <xs:element minOccurs="1" name="client_secret" type="xs:string" />
+          <xs:element minOccurs="1" fixed="application/xml" name="Content-Type" type="xs:string" />
+          <xs:element minOccurs="1" name="orderType" type="schemas:orderType" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="POST_OrderTicket_OutputMessage">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="response201" type="xs:anyType">
+            <xs:annotation>
+              <xs:documentation>Ticket ordered successfully and responds with the orde</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="POST_OrderTicket_400">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="OrderTicketresponse400" type="schemas:OrderTicketresponse400" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="POST_OrderTicket_401">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="OrderTicketresponse400" type="schemas:OrderTicketresponse400" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="POST_OrderTicket_404">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="OrderTicketresponse400" type="schemas:OrderTicketresponse400" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="POST_OrderTicket_500">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="OrderTicketresponse400" type="schemas:OrderTicketresponse400" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GET_ByTicketId_GET_InputMessage">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="ticket-id" type="xs:string" />
+          <xs:element minOccurs="1" name="client_id" type="xs:string" />
+          <xs:element minOccurs="1" name="client_secret" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GET_ByTicketId_GET_OutputMessage">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="ticketType" type="schemas:ticketType" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GET_ByTicketId_GET_400">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="response400" type="schemas:response400" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GET_ByTicketId_GET_401">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="response400" type="schemas:response400" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GET_ByTicketId_GET_404">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="response400" type="schemas:response400" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GET_ByTicketId_GET_500">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="response400" type="schemas:response400" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </types>
+  <message name="POST_OrderTicket_InputMessage">
+    <part name="POST_OrderTicket_InputMessage" element="schemas:POST_OrderTicket_InputMessage" />
+  </message>
+  <message name="POST_OrderTicket_OutputMessage">
+    <part name="POST_OrderTicket_OutputMessage" element="schemas:POST_OrderTicket_OutputMessage" />
+  </message>
+  <message name="POST_OrderTicket_400">
+    <part name="POST_OrderTicket_400" element="schemas:POST_OrderTicket_400" />
+  </message>
+  <message name="POST_OrderTicket_401">
+    <part name="POST_OrderTicket_401" element="schemas:POST_OrderTicket_401" />
+  </message>
+  <message name="POST_OrderTicket_404">
+    <part name="POST_OrderTicket_404" element="schemas:POST_OrderTicket_404" />
+  </message>
+  <message name="POST_OrderTicket_500">
+    <part name="POST_OrderTicket_500" element="schemas:POST_OrderTicket_500" />
+  </message>
+  <message name="GET_ByTicketId_GET_InputMessage">
+    <part name="GET_ByTicketId_GET_InputMessage" element="schemas:GET_ByTicketId_GET_InputMessage" />
+  </message>
+  <message name="GET_ByTicketId_GET_OutputMessage">
+    <part name="GET_ByTicketId_GET_OutputMessage" element="schemas:GET_ByTicketId_GET_OutputMessage" />
+  </message>
+  <message name="GET_ByTicketId_GET_400">
+    <part name="GET_ByTicketId_GET_400" element="schemas:GET_ByTicketId_GET_400" />
+  </message>
+  <message name="GET_ByTicketId_GET_401">
+    <part name="GET_ByTicketId_GET_401" element="schemas:GET_ByTicketId_GET_401" />
+  </message>
+  <message name="GET_ByTicketId_GET_404">
+    <part name="GET_ByTicketId_GET_404" element="schemas:GET_ByTicketId_GET_404" />
+  </message>
+  <message name="GET_ByTicketId_GET_500">
+    <part name="GET_ByTicketId_GET_500" element="schemas:GET_ByTicketId_GET_500" />
+  </message>
+  <portType name="Order_Management_PortType">
+    <operation name="POST_OrderTicket">
+      <documentation>This method is used to order a ticket.&lt;br&gt;
+It requires the following:&lt;br&gt;
+* Movie ID&lt;br&gt;
+* Number of tickets</documentation>
+      <input message="wsdl:POST_OrderTicket_InputMessage" />
+      <output message="wsdl:POST_OrderTicket_OutputMessage">
+        <documentation>Ticket ordered successfully and responds with the orde</documentation>
+      </output>
+      <fault name="POST_OrderTicket_400" message="wsdl:POST_OrderTicket_400">
+        <documentation />
+      </fault>
+      <fault name="POST_OrderTicket_401" message="wsdl:POST_OrderTicket_401">
+        <documentation />
+      </fault>
+      <fault name="POST_OrderTicket_404" message="wsdl:POST_OrderTicket_404">
+        <documentation />
+      </fault>
+      <fault name="POST_OrderTicket_500" message="wsdl:POST_OrderTicket_500">
+        <documentation />
+      </fault>
+    </operation>
+    <operation name="GET_ByTicketId_GET">
+      <documentation />
+      <input message="wsdl:GET_ByTicketId_GET_InputMessage" />
+      <output message="wsdl:GET_ByTicketId_GET_OutputMessage">
+        <documentation />
+      </output>
+      <fault name="GET_ByTicketId_GET_400" message="wsdl:GET_ByTicketId_GET_400">
+        <documentation />
+      </fault>
+      <fault name="GET_ByTicketId_GET_401" message="wsdl:GET_ByTicketId_GET_401">
+        <documentation />
+      </fault>
+      <fault name="GET_ByTicketId_GET_404" message="wsdl:GET_ByTicketId_GET_404">
+        <documentation />
+      </fault>
+      <fault name="GET_ByTicketId_GET_500" message="wsdl:GET_ByTicketId_GET_500">
+        <documentation />
+      </fault>
+    </operation>
+  </portType>
+  <binding name="Order_Management_Binding" type="wsdl:Order_Management_PortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+    <operation name="POST_OrderTicket">
+      <soap:operation soapAction="POST_OrderTicket" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input>
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output>
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+      <fault name="POST_OrderTicket_400">
+        <soap:fault use="literal" name="POST_OrderTicket_400" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </fault>
+      <fault name="POST_OrderTicket_401">
+        <soap:fault use="literal" name="POST_OrderTicket_401" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </fault>
+      <fault name="POST_OrderTicket_404">
+        <soap:fault use="literal" name="POST_OrderTicket_404" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </fault>
+      <fault name="POST_OrderTicket_500">
+        <soap:fault use="literal" name="POST_OrderTicket_500" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </fault>
+    </operation>
+    <operation name="GET_ByTicketId_GET">
+      <soap:operation soapAction="GET_ByTicketId_GET" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input>
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output>
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+      <fault name="GET_ByTicketId_GET_400">
+        <soap:fault use="literal" name="GET_ByTicketId_GET_400" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </fault>
+      <fault name="GET_ByTicketId_GET_401">
+        <soap:fault use="literal" name="GET_ByTicketId_GET_401" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </fault>
+      <fault name="GET_ByTicketId_GET_404">
+        <soap:fault use="literal" name="GET_ByTicketId_GET_404" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </fault>
+      <fault name="GET_ByTicketId_GET_500">
+        <soap:fault use="literal" name="GET_ByTicketId_GET_500" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </fault>
+    </operation>
+  </binding>
+  <service name="Order_Management">
+    <documentation />
+    <port name="default_Port" binding="wsdl:Order_Management_Binding">
+      <soap:address location="http://localhost:8081/Order_Management" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" />
+    </port>
+  </service>
+</definitions>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="5152dd3f-992a-4276-a052-2c469910b9f2" file="config.yaml" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="0fb73c74-ea78-4208-8c6a-0503bcc28b9e" >
+		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.username}" password="${db.password}" database="${db.database}" />
+	</db:config>
+	<error-handler name="globalError_Handler" doc:id="3f5dd00c-242f-4717-a8e9-a3c3678df022" >
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="104d5d86-cd76-479d-bea1-db85b64601cf" type="ANY">
+			<ee:transform doc:name="Error Description" doc:id="e5f253af-71b0-42d7-8ae0-1c66f3786f43" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	"message": error.description
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-continue>
+	</error-handler>
+</mule>
