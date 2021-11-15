@@ -8,9 +8,21 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	
 	<flow name="get-movies" doc:id="b467cbf6-b45c-49ae-9975-1d9f8f26a602" >
-		<db:select doc:name="Select" doc:id="0ad41f8b-88cc-45b0-b470-e7998e6d36da" config-ref="Database_Config">
-			<db:sql ><![CDATA[Select * from `movies`]]></db:sql>
+		<choice doc:name="Get Movies" doc:id="bb350ceb-45a2-4ebc-a7e2-84a231796726" >
+			<when expression="#[not isEmpty(attributes.queryParams.city)]">
+				<db:select doc:name="Get movies by City" doc:id="5a186756-fee3-4fc5-b3f5-2ebb654e5708" config-ref="Database_Config">
+					<db:sql ><![CDATA[SELECT * FROM movies WHERE city = :city]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	"city": attributes.queryParams.city
+}]]]></db:input-parameters>
+				</db:select>
+			</when>
+			<otherwise >
+				<db:select doc:name="Get all movies" doc:id="0ad41f8b-88cc-45b0-b470-e7998e6d36da" config-ref="Database_Config">
+			<db:sql><![CDATA[Select * from `movies`]]></db:sql>
 		</db:select>
+			</otherwise>
+		</choice>
 		<ee:transform doc:name="Java to Json" doc:id="abaee1bd-7f45-4e4c-9181-9de10ea10eb9" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -19,10 +31,10 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="5d612b41-68d9-427d-9fff-d0ae83de0be7" message="#[payload]"/>
+		<logger level="INFO" doc:name="Log movies" doc:id="5d612b41-68d9-427d-9fff-d0ae83de0be7" message="#[payload]"/>
 	</flow>
 	<flow name="get-movie-by-id" doc:id="d65da08e-a4eb-4469-8e2d-a3744ce87fc2" >
-		<db:select doc:name="Select" doc:id="ea897cda-6d93-45b9-93da-035be2c982f6" config-ref="Database_Config">
+		<db:select doc:name="Get movie by ID" doc:id="ea897cda-6d93-45b9-93da-035be2c982f6" config-ref="Database_Config">
 			<db:sql ><![CDATA[Select * from `movies` where movie_id = :id]]></db:sql>
 			<db:input-parameters ><![CDATA[#[{ 'id' : attributes.uriParams.id }]]]></db:input-parameters>
 		</db:select>
@@ -34,11 +46,11 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="62876201-5f04-47a6-9f9e-d0ad68b75b27" message="#[payload]"/>
+		<logger level="INFO" doc:name="Log movie details" doc:id="62876201-5f04-47a6-9f9e-d0ad68b75b27" message="#[payload]"/>
 	</flow>
 	<flow name="patch-available-seats" doc:id="5366ebdc-0d2c-4cbe-a9c2-74acf272309a" >
-		<set-variable value="#[payload.movie_id]" doc:name="Set Variable" doc:id="6fd50011-866d-4cbc-8a5b-40eb12837323" variableName="movie_id"/>
-		<db:update doc:name="Update" doc:id="32e8953d-8241-41a5-adb2-469ed2a730bf" config-ref="Database_Config">
+		<set-variable value="#[payload.movie_id]" doc:name="Movie ID" doc:id="6fd50011-866d-4cbc-8a5b-40eb12837323" variableName="movie_id"/>
+		<db:update doc:name="Update Seats" doc:id="32e8953d-8241-41a5-adb2-469ed2a730bf" config-ref="Database_Config">
 			<db:sql ><![CDATA[UPDATE movies
 SET available_seats = :available_seats
 WHERE movie_id = :movie_id;
@@ -48,8 +60,8 @@ WHERE movie_id = :movie_id;
 	'movie_id' : payload.movie_id
 }]]]></db:input-parameters>
 		</db:update>
-		<logger level="INFO" doc:name="Logger" doc:id="ad655c09-f033-4999-bef6-86e3b2824652" message="#[vars.movie_id]"/>
-		<http:request method="GET" doc:name="Request" doc:id="55be4bd4-2001-45a5-9b09-c062fe761fe4" path="/api/movies/{id}" config-ref="HTTP_Request_configuration">
+		<logger level="INFO" doc:name="Log query output" doc:id="ad655c09-f033-4999-bef6-86e3b2824652" message="#[vars.movie_id]"/>
+		<http:request method="GET" doc:name="Get Movie By ID" doc:id="55be4bd4-2001-45a5-9b09-c062fe761fe4" path="/api/movies/{id}" config-ref="HTTP_Request_configuration">
 			<http:uri-params ><![CDATA[#[output application/java
 ---
 {

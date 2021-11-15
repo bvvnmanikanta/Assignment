@@ -124,12 +124,12 @@ output application/json
         </error-handler>
     </flow>
     <flow name="patch:\movies\(id):application\json:movie-management-config">
-		<flow-ref doc:name="Flow Reference" doc:id="d955b6c7-435d-4b15-b52f-124f141cc80c" name="patch-available-seats"/>
+		<flow-ref doc:name="Update Seats" doc:id="d955b6c7-435d-4b15-b52f-124f141cc80c" name="patch-available-seats"/>
     </flow>
     <flow name="get:\movies:movie-management-config">
-		<flow-ref doc:name="Flow Reference" doc:id="07baf20f-781d-484f-91b6-3af36e714562" name="get-movies"/>
+		<flow-ref doc:name="Get Movies" doc:id="07baf20f-781d-484f-91b6-3af36e714562" name="get-movies"/>
     </flow>
     <flow name="get:\movies\(id):movie-management-config">
-		<flow-ref doc:name="Flow Reference" doc:id="5d035bc0-d03f-45a3-a622-55b94fa71ee8" name="get-movie-by-id" />
+		<flow-ref doc:name="Get Movie by ID" doc:id="5d035bc0-d03f-45a3-a622-55b94fa71ee8" name="get-movie-by-id" />
     </flow>
 </mule>
